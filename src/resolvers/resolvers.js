@@ -5,7 +5,7 @@ const resolvers = {
         clients
     },
     Mutation: {
-        addPerson({input}){
+        addPerson(_, {input}, context){
             const uuidv1 = require('uuid/v1')
             var uid = uuidv1()
             return {
