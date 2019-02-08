@@ -1,0 +1,30 @@
+{
+  "name": "apollo-server-demo",
+  "version": "1.0.0",
+  "description": "Demo for apollo",
+  "main": "index.js",
+  "dependencies": {
+    "apollo-server": "^2.4.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "graphql": "^14.1.1",
+    "graphql-tools": "^4.0.4",
+    "nodemon": "^1.18.9"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "nodemon src/index.js --watch server --exec babel-node",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/primitivorm/apollo-server-demo.git"
+  },
+  "author": "Primitivo RM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/primitivorm/apollo-server-demo/issues"
+  },
+  "homepage": "https://github.com/primitivorm/apollo-server-demo#readme"
+}

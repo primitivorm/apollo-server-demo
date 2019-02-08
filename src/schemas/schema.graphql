@@ -1,0 +1,248 @@
+type Query {
+    
+    # Get the clients
+    #
+    # Arguments
+    # clientId - To retrieve only one client with the defined client Id
+    # clientNumber - To retrieve only one client with the defined client number
+    # status - To retrieve all the clients with the specified status.
+    # search - To retrieve all the clients that match the specified search term. The search term is searched in the next fields:
+    #  - clientId
+    #  - clientNumber
+    #  - taxId
+    #  - businessName
+    #  - commercialName
+    # Note: only one param can apply at the same time, if that param is nunll then you show the info based on the next param.
+    #    Param hierarchy from the most priority: search, status, clientNumber, clientId
+    clients(clientId: String, clientNumber: Int, status: ClientStatusEnum, search: String): [Client!]!
+
+    sales(saleId: String, clientId: String, search: String): [Sale!]!
+
+}
+
+# Client (complete)
+type Client {
+  # Id of the client, cant be changed
+  clientId: ID!
+
+  # Client number, number and Id are different values, this number can be changed by the client but can´t be duplicated
+  clientNumber: Int!
+
+  # Tax Id, it depends on the country.
+  # Max 20 characters
+  taxId: String
+
+  # The official name of the client.
+  # It can be a business name or the name of the person.
+  businessName: String
+
+  # The commercial name of the client.
+  # If the commercial name is the same as the official name you can leave this one empty
+  commercialName: String
+
+  # Country code in ISO 3166 Alpha-3 (3 characters)
+  countryCode: String!
+
+  # Global Location Number
+  # 13 characters
+  gln: String
+
+  # Client Status
+  # Enum: ClientStatusEnum
+  status: ClientStatusEnum
+
+  # Date of registration
+  # ISO 8601 - Format "yyyy-mm-ddThh:mm:ss.ffffff+|-hhmm"
+  registeredDate: String!
+
+  # Date of last activity
+  # ISO 8601 - Format "yyyy-mm-ddThh:mm:ss.ffffff+|-hhmm"
+  lastActivity: String!
+
+  # Client Address
+  address: Address!
+
+  # List of contacts (persons) related to the client
+  contacts: [Person!]!
+
+  # List of registered bank accounts of the client
+  bankAccounts: [BankAccount]!
+
+    # The default person from the client to send a sales quote
+  salesQuotesDefaultContact: Person
+
+    # List of sales
+  sales: [Sale!]!
+
+  # We can sell on credit to this client
+  sellOnCredit: Boolean!
+
+  # The maximum credit amount for a client
+  # This is mandatory if the sell on credit (sellOnCredit) field is true
+  # If you want to make this infinite the value must be -1
+  maximumCreditAmount: Float
+
+  # The currency of the maximum credit amount for a client
+  # This is mandatory if the sell on credit (sellOnCredit) field is true
+  maximumCreditCurrency: String
+
+  # The maximum number of days of credit that the client get in a sale
+  # This is the default value when registering a sale
+  maximumCreditDays: Int
+}
+
+# Enum - Client status (complete)
+enum ClientStatusEnum {
+  active
+  inactive
+  deleted
+}
+
+# Address (Complete)
+type Address {
+  # Street name
+  street: String
+
+  # External number to locate it from the street
+  outsideNumber: String
+
+  # Inside number, for example, appartment number
+  insideNumber: String
+
+  # Name of the province of the address
+  # es-mx - Colonia
+  neighborhood: String
+
+  # Municipality or any other single urban administrative division
+  # es-mx - Delegación o Municipio
+  municipality: String
+
+  # Name of the city
+  city: String
+
+  # Name of the state
+  state: String
+
+  # Country name
+  country: String
+
+  # Country code in ISO 3166 Alpha-3 (3 characters)
+  countryCode: String!
+
+  # Postal code or zip code
+  postal_code: String
+
+  # Any important reference to locate the address
+  reference: String
+}
+
+# The persons that can be contacts to clients (complete)
+type Person {
+  # Id of the person thar is a contact from a client
+  personId: ID!
+
+  # Name of the person
+  name: String!
+
+  # Job title of the person
+  jobTitle: String
+
+  # Email of the person
+  email: String
+
+  # Landline number of the person
+  phone: String
+
+  # Mobile number of the person
+  mobilePhone: String
+
+  # Country code in ISO 3166 Alpha-3 (3 characters)
+  countryCode: String!
+
+  # Country
+  country: String!
+}
+
+# Bank account basic information(Complete)
+type BankAccount {
+
+   # Id of the bank account
+   bankAccountId: ID!
+
+   # Bank account name for user identification
+   bankAccountName: String!
+
+   # Bank account number
+   bankAccountNumber: String!
+
+   # Account Status
+   status: MoneyAccountStatusEnum
+
+   # Account Balance
+   accountBalance: Float!
+
+   # Owner of the bank account
+   owner: String
+
+   # Currency code, 3 digits, ISO 4217
+   currency: String
+
+   # Country code in ISO 3166 Alpha-3 (3 characters)
+   contryCode: String!
+   
+   # Bank 
+   bank: Bank
+
+   # Specific data of a bank account depending on the country
+   # Defined by the union BankAccountDataLocalized
+   bankAccountDataLocalized: BankAccountDataLocalized
+
+}
+
+# Enum - Defines the status of a money account: bank, credit or other
+enum MoneyAccountStatusEnum {
+   active
+   inactive
+}
+
+# Union of different details of a bank account depending on the country (Complete)
+union BankAccountDataLocalized = BankAccountData_MEX
+
+# Details of a bank account for Mexico (Complete)
+# union in BankAccountDataLocalized
+# MEX (complete)
+type BankAccountData_MEX {
+
+   # Clabe interbancaria
+   clabe: String
+}
+
+
+# Bank catalog (complete)
+type Bank {
+
+   # Id of the bank
+   bankId: ID!
+
+   # Bank code given the country catalog of banks
+   bankCode: String!
+
+   # Short name of the bank
+   # This is the name that is shown almost everywhere
+   name: String!
+
+   # Full name of the bank
+   longName: String
+   
+   # Country code in ISO 3166 Alpha-3 (3 characters)
+   countryCode: String!    
+}
+
+
+type Sale implements Income {
+   saleId: ID!
+}
+
+interface Income {
+   saleId: ID!
+}
