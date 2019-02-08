@@ -246,3 +246,32 @@ type Sale implements Income {
 interface Income {
    saleId: ID!
 }
+
+
+input PersonInput {
+
+  # Name of the person
+  name: String!
+
+  # Job title of the person
+  jobTitle: String
+
+  # Email of the person
+  email: String
+
+  # Landline number of the person
+  phone: String
+
+  # Mobile number of the person
+  mobilePhone: String
+
+  # Country code in ISO 3166 Alpha-3 (3 characters)
+  countryCode: String!
+
+  # Country
+  country: String!
+}
+
+type Mutation {
+    addPerson(input: PersonInput!): Person
+}
