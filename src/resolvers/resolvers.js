@@ -2,7 +2,14 @@ import { clients } from './query/clients'
 
 const resolvers = {
     Query: {
-        clients
+        clients(parent, args, ctx, info) {
+        if(!args.clientId){
+            return clients
+        }
+        return clients.filter((client) => {
+            return client.id.includes(args.clientId)
+        })
+        }
     },
     Mutation: {
         addPerson(_, {input}, context){
